@@ -16,7 +16,9 @@ cols = ['Index', 'Scan No.', 'Depth', 'Layer']
 df = df[cols]
 df['Depth'] = df['Depth'].replace([-1], 0.0)
 
-# section two - formating
+# average start and stop
+mask = df['Depth'] != 0
+df = df[mask]
 df_format = df.groupby(["Scan No.", "Layer"]).agg({'Depth':"mean"}).reset_index()
 df_format = df_format.pivot(index = "Scan No.", columns = "Layer", values = "Depth")
 
@@ -33,9 +35,6 @@ layer["TOTAL"]   = df_format["RPE"]   - df_format["ORNFL"]
 layer["OVERALL"] = (layer["NFL/GLC"] + layer["IPL"] + layer["INL"] + layer["OPL"] + layer["ONL-IS"] + layer["OS"] + layer["RPE"]) / 7
 
 # all data
-layer.to_csv(name + "Mouse_OUT_FULL.csv", encoding='utf-8')
-mask = layer["OVERALL"] != 0
-layer[mask]
 layer.to_csv(name + "Mouse_OUT.csv", encoding='utf-8')
 
 #creating the image sets to be processed
